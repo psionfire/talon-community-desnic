@@ -1,3 +1,5 @@
+from typing import Iterable, Optional
+
 from talon import Context, Module, actions, app, settings
 
 from ...core.described_functions import create_described_insert_between
@@ -62,6 +64,44 @@ def _insert_function(prefix: str, formatter_setting: str, text: str) -> None:
     actions.edit.left()
 
 
+def _format_name(text: str, formatter_setting: str) -> str:
+    return actions.user.formatted_text(text, settings.get(formatter_setting))
+
+
+def _format_variable_name(text: str) -> str:
+    return _format_name(text, "user.code_public_variable_formatter")
+
+
+def _format_constant_name(text: str) -> str:
+    return actions.user.formatted_text(text, "ALL_CAPS,SNAKE_CASE")
+
+
+def _format_signal_name(text: str) -> str:
+    return actions.user.formatted_text(text, "SNAKE_CASE")
+
+
+def _insert_parameter(name: str, type_name: Optional[str] = None) -> None:
+    formatted_name = _format_variable_name(name)
+    if type_name:
+        actions.insert(f"({formatted_name}: {type_name})")
+    else:
+        actions.insert(f"({formatted_name})")
+
+
+def _insert_variable(name: str, type_name: Optional[str] = None) -> None:
+    formatted_name = _format_variable_name(name)
+    if type_name:
+        actions.insert(f"var {formatted_name}: {type_name}")
+    else:
+        actions.insert(f"var {formatted_name}")
+
+
+def _insert_enum(name: str, values: Iterable[str]) -> None:
+    formatted_name = actions.user.formatted_text(name, "PUBLIC_CAMEL_CASE")
+    formatted_values = ", ".join(_format_constant_name(value) for value in values)
+    actions.insert(f"enum {formatted_name} {{ {formatted_values} }}")
+
+
 @ctx.action_class("user")
 class UserActions:
     def code_get_operators() -> Operators:
@@ -121,6 +161,148 @@ class UserActions:
 
     def code_insert_named_argument(parameter_name: str):
         actions.insert(f"{parameter_name}: ")
+
+    def gdscript_insert_parameter(text: str):
+        _insert_parameter(text)
+
+    def gdscript_insert_typed_parameter(name: str, type: str):
+        _insert_parameter(name, type)
+
+    def gdscript_insert_variable(text: str):
+        _insert_variable(text)
+
+    def gdscript_insert_typed_variable(name: str, type: str):
+        _insert_variable(name, type)
+
+    def gdscript_insert_export(name: str, type: str):
+        formatted_name = _format_variable_name(name)
+        actions.insert(f"@export var {formatted_name}: {type}")
+
+    def gdscript_insert_onready(name: str):
+        formatted_name = _format_variable_name(name)
+        actions.insert(f"@onready var {formatted_name}")
+
+    def gdscript_insert_constant(name: str, value: str):
+        formatted_name = _format_constant_name(name)
+        actions.insert(f"const {formatted_name} = {value}")
+
+    def gdscript_insert_signal(name: str):
+        formatted_name = _format_signal_name(name)
+        actions.insert(f"signal {formatted_name}")
+
+    def gdscript_emit_signal(name: str):
+        formatted_name = _format_signal_name(name)
+        actions.insert(f'emit_signal("{formatted_name}")')
+
+    def gdscript_connect_signal(name: str):
+        formatted_name = _format_signal_name(name)
+        actions.insert(f'.connect("{formatted_name}", self, "_on_{formatted_name}")')
+
+    def gdscript_on_signal(name: str):
+        formatted_name = _format_signal_name(name)
+        actions.insert(f"func _on_{formatted_name}(): pass")
+
+    def gdscript_insert_if(condition: str):
+        actions.insert(f"if {condition}:")
+
+    def gdscript_insert_elif(condition: str):
+        actions.insert(f"elif {condition}:")
+
+    def gdscript_insert_else():
+        actions.insert("else:")
+
+    def gdscript_insert_match(name: str):
+        actions.insert(f"match {name}:")
+
+    def gdscript_insert_for(variable: str, iterable: str):
+        actions.insert(f"for {variable} in {iterable}:")
+
+    def gdscript_insert_for_range(variable: str, maximum: str):
+        actions.insert(f"for {variable} in range({maximum}):")
+
+    def gdscript_insert_while(condition: str):
+        actions.insert(f"while {condition}:")
+
+    def gdscript_insert_lifecycle(name: str):
+        actions.insert(f"func _{name}():")
+
+    def gdscript_insert_process():
+        actions.insert("func _process(delta):")
+
+    def gdscript_insert_physics_process():
+        actions.insert("func _physics_process(delta):")
+
+    def gdscript_insert_input(event_name: str):
+        actions.insert(f"func _{event_name}(event):")
+
+    def gdscript_insert_array(values: Optional[str] = None):
+        if values:
+            actions.insert(f"[{values}]")
+        else:
+            actions.insert("[]")
+
+    def gdscript_insert_dictionary(pairs: Optional[str] = None):
+        if pairs:
+            actions.insert(f"{{{pairs}}}")
+        else:
+            actions.insert("{}")
+
+    def gdscript_insert_enum(name: str, values: str):
+        value_list = [value.strip(",") for value in values.split() if value.strip(",")]
+        _insert_enum(name, value_list)
+
+    def gdscript_assignment(name: str, value: str):
+        actions.insert(f"{name} = {value}")
+
+    def gdscript_increment(name: str):
+        actions.insert(f"{name} += 1")
+
+    def gdscript_decrement(name: str):
+        actions.insert(f"{name} -= 1")
+
+    def gdscript_random_int(minimum: str, maximum: str):
+        actions.insert(f"randi_range({minimum}, {maximum})")
+
+    def gdscript_random_float(minimum: str, maximum: str):
+        actions.insert(f"randf_range({minimum}, {maximum})")
+
+    def gdscript_randomize():
+        actions.insert("randomize()")
+
+    def gdscript_get_node(path: str):
+        actions.insert(f'get_node("{path}")')
+
+    def gdscript_add_child(node: str):
+        actions.insert(f"add_child({node})")
+
+    def gdscript_queue_free():
+        actions.insert("queue_free()")
+
+    def gdscript_is_instance_valid(name: str):
+        actions.insert(f"is_instance_valid({name})")
+
+    def gdscript_has_node(path: str):
+        actions.insert(f'has_node("{path}")')
+
+    def gdscript_return():
+        actions.insert("return")
+
+    def gdscript_pass():
+        actions.insert("pass")
+
+    def gdscript_print(text: str):
+        actions.insert(f"print({text})")
+
+    def gdscript_class_name(name: str):
+        formatted_name = actions.user.formatted_text(name, "PUBLIC_CAMEL_CASE")
+        actions.insert(f"class_name {formatted_name}")
+
+    def gdscript_extends(name: str):
+        formatted_name = actions.user.formatted_text(name, "PUBLIC_CAMEL_CASE")
+        actions.insert(f"extends {formatted_name}")
+
+    def gdscript_assert(condition: str):
+        actions.insert(f"assert({condition})")
 
     def code_try_catch():
         app.notify("GDScript does not support try/catch blocks")

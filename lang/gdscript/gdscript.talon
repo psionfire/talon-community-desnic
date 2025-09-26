@@ -27,17 +27,175 @@ settings():
 # Sample commands
 # ---------------
 state extends <user.text>:
-    insert("extends ")
-    insert(user.formatted_text(text, "PUBLIC_CAMEL_CASE"))
+    user.gdscript_extends(text)
 
 state class name <user.text>:
-    insert("class_name ")
-    insert(user.formatted_text(text, "PUBLIC_CAMEL_CASE"))
+    user.gdscript_class_name(text)
 
 signal <user.text>:
-    insert("signal ")
-    insert(user.formatted_text(text, "SNAKE_CASE"))
+    user.gdscript_insert_signal(text)
 
 state on ready (var | variable) <user.text>:
-    insert("@onready var ")
-    user.code_public_variable_formatter(text)
+    user.gdscript_insert_onready(text)
+
+function <user.text>:
+    user.code_public_function(text)
+
+private function <user.text>:
+    user.code_private_function(text)
+
+static function <user.text>:
+    user.code_public_static_function(text)
+
+private static function <user.text>:
+    user.code_private_static_function(text)
+
+parameter <user.text>$:
+    user.gdscript_insert_parameter(text)
+
+parameter <user.text> <user.code_type>:
+    user.gdscript_insert_typed_parameter(text, code_type)
+
+return type <user.code_type>:
+    user.code_insert_return_type(code_type)
+
+variable <user.text>$:
+    user.gdscript_insert_variable(text)
+
+variable <user.text> <user.code_type>:
+    user.gdscript_insert_typed_variable(text, code_type)
+
+export int <user.text>:
+    user.gdscript_insert_export(text, "int")
+
+export float <user.text>:
+    user.gdscript_insert_export(text, "float")
+
+export bool <user.text>:
+    user.gdscript_insert_export(text, "bool")
+
+onready var <user.text>:
+    user.gdscript_insert_onready(text)
+
+const <user.text> = <user.text>:
+    user.gdscript_insert_constant(text, text_1)
+
+emit signal <user.text>:
+    user.gdscript_emit_signal(text)
+
+connect signal <user.text>:
+    user.gdscript_connect_signal(text)
+
+on signal <user.text>:
+    user.gdscript_on_signal(text)
+
+if <user.text>:
+    user.gdscript_insert_if(text)
+
+elif <user.text>:
+    user.gdscript_insert_elif(text)
+
+else:
+    user.gdscript_insert_else()
+
+match <user.text>:
+    user.gdscript_insert_match(text)
+
+for <user.text> in <user.text>:
+    user.gdscript_insert_for(text, text_1)
+
+for <user.text> in range <number>:
+    user.gdscript_insert_for_range(text, number)
+
+while <user.text>:
+    user.gdscript_insert_while(text)
+
+init:
+    user.gdscript_insert_lifecycle("init")
+
+ready:
+    user.gdscript_insert_lifecycle("ready")
+
+enter tree:
+    user.gdscript_insert_lifecycle("enter_tree")
+
+exit tree:
+    user.gdscript_insert_lifecycle("exit_tree")
+
+process:
+    user.gdscript_insert_process()
+
+physics process:
+    user.gdscript_insert_physics_process()
+
+input event:
+    user.gdscript_insert_input("input")
+
+unhandled input event:
+    user.gdscript_insert_input("unhandled_input")
+
+empty array:
+    user.gdscript_insert_array()
+
+array <user.text>:
+    user.gdscript_insert_array(text)
+
+empty dictionary:
+    user.gdscript_insert_dictionary()
+
+dictionary <user.text>:
+    user.gdscript_insert_dictionary(text)
+
+enum <user.text> <user.text>:
+    user.gdscript_insert_enum(text, text_1)
+
+set <user.text> equals <user.text>:
+    user.gdscript_assignment(text, text_1)
+
+increment <user.text>:
+    user.gdscript_increment(text)
+
+decrement <user.text>:
+    user.gdscript_decrement(text)
+
+random int <number> to <number>:
+    user.gdscript_random_int(number, number_1)
+
+random float <number> to <number>:
+    user.gdscript_random_float(number, number_1)
+
+randomize seed:
+    user.gdscript_randomize()
+
+get node <user.text>:
+    user.gdscript_get_node(text)
+
+add child <user.text>:
+    user.gdscript_add_child(text)
+
+queue free:
+    user.gdscript_queue_free()
+
+is instance valid <user.text>:
+    user.gdscript_is_instance_valid(text)
+
+has node <user.text>:
+    user.gdscript_has_node(text)
+
+return:
+    user.gdscript_return()
+
+pass:
+    user.gdscript_pass()
+
+print <user.text>:
+    user.gdscript_print(text)
+
+class name <user.text>:
+    user.gdscript_class_name(text)
+
+extends <user.text>:
+    user.gdscript_extends(text)
+
+assert <user.text>:
+    user.gdscript_assert(text)
