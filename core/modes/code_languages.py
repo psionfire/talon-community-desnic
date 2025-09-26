@@ -27,6 +27,7 @@ code_languages = [
     Language("elixir", "elixir", ["ex"]),
     # Language("elm", "elm", ["elm"]),
     Language("gdb", "g d b", ["gdb"]),
+    Language("gdscript", ["g d script", "godot script"], ["gd"]),
     Language("go", ["go lang", "go language"], ["go"]),
     Language("java", "java", ["java"]),
     Language("javascript", "java script", ["js"]),

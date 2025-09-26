@@ -1,0 +1,10 @@
+list: user.code_common_function
+code.language: gdscript
+-
+
+assert
+emit signal: "emit_signal"
+load
+preload
+print
+queue free: "queue_free"
