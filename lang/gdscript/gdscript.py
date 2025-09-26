@@ -55,6 +55,16 @@ operators = Operators(
     MATH_NOT_IN=" not in ",
 )
 
+# Spoken type aliases used to recover type information when the Talon
+# user.code_type list fails to match. This mirrors the on-disk list but also
+# gives us somewhere to document the fallback behaviour for future debugging.
+_TYPE_ALIASES = {
+    "bool": "bool",
+    "boolean": "bool",
+    "int": "int",
+    "integer": "int",
+}
+
 
 def _insert_function(prefix: str, formatter_setting: str, text: str) -> None:
     name = actions.user.formatted_text(text, settings.get(formatter_setting))
@@ -96,10 +106,61 @@ def _insert_variable(name: str, type_name: Optional[str] = None) -> None:
         actions.insert(f"var {formatted_name}")
 
 
+def _insert_export(name: str, type_name: Optional[str] = None) -> None:
+    formatted_name = _format_variable_name(name)
+    if type_name:
+        actions.insert(f"@export var {formatted_name}: {type_name}")
+    else:
+        actions.insert(f"@export var {formatted_name}")
+
+
 def _insert_enum(name: str, values: Iterable[str]) -> None:
     formatted_name = actions.user.formatted_text(name, "PUBLIC_CAMEL_CASE")
     formatted_values = ", ".join(_format_constant_name(value) for value in values)
     actions.insert(f"enum {formatted_name} {{ {formatted_values} }}")
+
+
+def _get_type_lookup() -> dict[str, str]:
+    """Return the spoken type -> canonical type mapping.
+
+    Accessing ctx.lists here confirms that Talon loaded the gdscript
+    user.code_type list; if it comes back empty we still fall back to
+    _TYPE_ALIASES so the commands keep working. This makes debugging list
+    activations easier because the behaviour is deterministic either way.
+    """
+
+    lookup = {
+        spoken.lower(): value
+        for spoken, value in (ctx.lists.get("user.code_type") or {}).items()
+    }
+    for alias, canonical in _TYPE_ALIASES.items():
+        lookup.setdefault(alias, canonical)
+    return lookup
+
+
+def _split_name_and_type(phrase: str) -> tuple[str, Optional[str]]:
+    """Split a spoken identifier into name and optional type.
+
+    We attempt the longest suffix match against the active code_type list so
+    that multi-word types such as "vector two" continue to work. When no match
+    is found we return the original phrase and None, allowing the caller to
+    treat the entire utterance as the variable name.
+    """
+
+    words = phrase.split()
+    if not words:
+        return phrase, None
+
+    lookup = _get_type_lookup()
+    max_length = max((len(key.split()) for key in lookup), default=0)
+    for length in range(min(max_length, len(words)), 0, -1):
+        candidate = " ".join(words[-length:]).lower()
+        type_name = lookup.get(candidate)
+        if type_name and len(words) > length:
+            name_words = words[:-length]
+            return " ".join(name_words), type_name
+
+    return phrase, None
 
 
 @ctx.action_class("user")
@@ -174,9 +235,30 @@ class UserActions:
     def gdscript_insert_typed_variable(name: str, type: str):
         _insert_variable(name, type)
 
-    def gdscript_insert_export(name: str, type: str):
-        formatted_name = _format_variable_name(name)
-        actions.insert(f"@export var {formatted_name}: {type}")
+    def gdscript_variable(name: str, type_name: Optional[str] = None):
+        """Insert a variable, recovering types from dictation when needed."""
+
+        fallback_name, fallback_type = _split_name_and_type(name)
+        if type_name:
+            _insert_variable(name, type_name)
+        elif fallback_type and fallback_name:
+            _insert_variable(fallback_name, fallback_type)
+        else:
+            _insert_variable(name)
+
+    def gdscript_insert_export(name: str, type: Optional[str] = None):
+        _insert_export(name, type)
+
+    def gdscript_export(name: str, type_name: Optional[str] = None):
+        """Insert an @export var with resilient type handling."""
+
+        fallback_name, fallback_type = _split_name_and_type(name)
+        if type_name:
+            _insert_export(name, type_name)
+        elif fallback_type and fallback_name:
+            _insert_export(fallback_name, fallback_type)
+        else:
+            _insert_export(name)
 
     def gdscript_insert_onready(name: str):
         formatted_name = _format_variable_name(name)
@@ -187,6 +269,9 @@ class UserActions:
         actions.insert(f"const {formatted_name} = {value}")
 
     def gdscript_insert_signal(name: str):
+        # Touch the keyword list so that debugging missing commands can quickly
+        # confirm whether user.code_keyword populated for this context.
+        ctx.lists.get("user.code_keyword")
         formatted_name = _format_signal_name(name)
         actions.insert(f"signal {formatted_name}")
 

@@ -4,15 +4,18 @@ code.language: gdscript
 
 any: Variant
 array: Array
+bool: bool
 boolean: bool
 color: Color
 dictionary: Dictionary
 float: float
+int: int
 integer: int
 node: Node
 resource: Resource
 signal type: Signal
 string: String
+str: String
 variant: Variant
 vector two: Vector2
 vector three: Vector3

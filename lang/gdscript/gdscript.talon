@@ -32,6 +32,8 @@ state extends <user.text>:
 state class name <user.text>:
     user.gdscript_class_name(text)
 
+# The signal command stays simple, but the action itself now has additional
+# validation to cope with missing list data; see gdscript.py for details.
 signal <user.text>:
     user.gdscript_insert_signal(text)
 
@@ -59,20 +61,31 @@ parameter <user.text> <user.code_type>:
 return type <user.code_type>:
     user.code_insert_return_type(code_type)
 
+# When the type capture fails we fall back to parsing the spoken text so that
+# phrases like "variable health int" still work.
 variable <user.text>$:
-    user.gdscript_insert_variable(text)
+    user.gdscript_variable(text)
 
+# Explicit capture of user.code_type is still supported. The Python helper
+# consolidates the logic so both paths behave consistently.
 variable <user.text> <user.code_type>:
-    user.gdscript_insert_typed_variable(text, code_type)
+    user.gdscript_variable(text, code_type)
 
+# Export supports the same fallback behaviour as variables; the helper will
+# attempt to recover the type from dictation if the capture is empty.
 export int <user.text>:
-    user.gdscript_insert_export(text, "int")
+    user.gdscript_export(text, "int")
 
 export float <user.text>:
-    user.gdscript_insert_export(text, "float")
+    user.gdscript_export(text, "float")
 
 export bool <user.text>:
-    user.gdscript_insert_export(text, "bool")
+    user.gdscript_export(text, "bool")
+
+# Spoken fallback for @export when no code_type capture fires. This mirrors the
+# variable fallback, allowing commands like "export speed int".
+export <user.text>$:
+    user.gdscript_export(text)
 
 onready var <user.text>:
     user.gdscript_insert_onready(text)
