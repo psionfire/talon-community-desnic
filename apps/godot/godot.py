@@ -37,7 +37,7 @@ lang_ctx = Context()
 lang_ctx.matches = r"""
 app: godot
 not tag: user.code_language_forced
-win.title: /(?i)\.gd/
+win.title: /(?i)(\.gd|godot engine)/
 """
 
 
