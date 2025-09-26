@@ -397,3 +397,182 @@ class UserActions:
 
     def code_state_go_to():
         app.notify("GDScript does not support goto statements")
+
+
+@mod.action_class
+class GDScriptActions:
+    def gdscript_insert_parameter(text: str):
+        """Insert a function parameter without a type annotation."""
+        pass
+
+    def gdscript_insert_typed_parameter(name: str, type: str):
+        """Insert a function parameter with a type annotation."""
+        pass
+
+    def gdscript_insert_variable(text: str):
+        """Insert a variable declaration without a type annotation."""
+        pass
+
+    def gdscript_insert_typed_variable(name: str, type: str):
+        """Insert a variable declaration with a type annotation."""
+        pass
+
+    def gdscript_variable(name: str, type_name: Optional[str] = None):
+        """Insert a variable, inferring the type from dictation when possible."""
+        pass
+
+    def gdscript_insert_export(name: str, type: Optional[str] = None):
+        """Insert an @export variable declaration with an optional type."""
+        pass
+
+    def gdscript_export(name: str, type_name: Optional[str] = None):
+        """Insert an @export var, inferring the type from dictation when possible."""
+        pass
+
+    def gdscript_insert_onready(name: str):
+        """Insert an @onready variable declaration."""
+        pass
+
+    def gdscript_insert_constant(name: str, value: str):
+        """Insert a constant declaration with the provided value."""
+        pass
+
+    def gdscript_insert_signal(name: str):
+        """Insert a signal declaration using snake_case formatting."""
+        pass
+
+    def gdscript_emit_signal(name: str):
+        """Insert an emit_signal call for the given signal name."""
+        pass
+
+    def gdscript_connect_signal(name: str):
+        """Insert a connect call that wires a signal to a handler."""
+        pass
+
+    def gdscript_on_signal(name: str):
+        """Insert a signal handler stub for the specified signal."""
+        pass
+
+    def gdscript_insert_if(condition: str):
+        """Insert an if statement header."""
+        pass
+
+    def gdscript_insert_elif(condition: str):
+        """Insert an elif statement header."""
+        pass
+
+    def gdscript_insert_else():
+        """Insert an else statement header."""
+        pass
+
+    def gdscript_insert_match(name: str):
+        """Insert a match statement header."""
+        pass
+
+    def gdscript_insert_for(variable: str, iterable: str):
+        """Insert a for loop iterating over the given iterable."""
+        pass
+
+    def gdscript_insert_for_range(variable: str, maximum: str):
+        """Insert a range-based for loop."""
+        pass
+
+    def gdscript_insert_while(condition: str):
+        """Insert a while loop header."""
+        pass
+
+    def gdscript_insert_lifecycle(name: str):
+        """Insert a lifecycle callback stub."""
+        pass
+
+    def gdscript_insert_process():
+        """Insert the _process lifecycle callback stub."""
+        pass
+
+    def gdscript_insert_physics_process():
+        """Insert the _physics_process lifecycle callback stub."""
+        pass
+
+    def gdscript_insert_input(event_name: str):
+        """Insert an input callback stub for the given event."""
+        pass
+
+    def gdscript_insert_array(values: Optional[str] = None):
+        """Insert an array literal, optionally populated with values."""
+        pass
+
+    def gdscript_insert_dictionary(pairs: Optional[str] = None):
+        """Insert a dictionary literal, optionally populated with pairs."""
+        pass
+
+    def gdscript_insert_enum(name: str, values: str):
+        """Insert an enum declaration with the provided members."""
+        pass
+
+    def gdscript_assignment(name: str, value: str):
+        """Insert a variable assignment statement."""
+        pass
+
+    def gdscript_increment(name: str):
+        """Insert an increment statement for the given variable."""
+        pass
+
+    def gdscript_decrement(name: str):
+        """Insert a decrement statement for the given variable."""
+        pass
+
+    def gdscript_random_int(minimum: str, maximum: str):
+        """Insert a randi_range(min, max) call."""
+        pass
+
+    def gdscript_random_float(minimum: str, maximum: str):
+        """Insert a randf_range(min, max) call."""
+        pass
+
+    def gdscript_randomize():
+        """Insert a randomize() call."""
+        pass
+
+    def gdscript_get_node(path: str):
+        """Insert a get_node call with the provided path."""
+        pass
+
+    def gdscript_add_child(node: str):
+        """Insert an add_child call for the specified node."""
+        pass
+
+    def gdscript_queue_free():
+        """Insert a queue_free() call."""
+        pass
+
+    def gdscript_is_instance_valid(name: str):
+        """Insert an is_instance_valid check for the given instance."""
+        pass
+
+    def gdscript_has_node(path: str):
+        """Insert a has_node call with the provided path."""
+        pass
+
+    def gdscript_return():
+        """Insert a return statement."""
+        pass
+
+    def gdscript_pass():
+        """Insert a pass statement."""
+        pass
+
+    def gdscript_print(text: str):
+        """Insert a print call with the provided text."""
+        pass
+
+    def gdscript_class_name(name: str):
+        """Insert a class_name declaration using PublicCamelCase."""
+        pass
+
+    def gdscript_extends(name: str):
+        """Insert an extends declaration using PublicCamelCase."""
+        pass
+
+    def gdscript_assert(condition: str):
+        """Insert an assert statement for the provided condition."""
+        pass
