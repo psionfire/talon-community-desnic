@@ -1,0 +1,20 @@
+list: user.code_type
+code.language: gdscript
+-
+
+any: Variant
+array: Array
+boolean: bool
+color: Color
+dictionary: Dictionary
+float: float
+integer: int
+node: Node
+resource: Resource
+signal type: Signal
+string: String
+variant: Variant
+vector two: Vector2
+vector three: Vector3
+vector four: Vector4
+void: void
