@@ -281,13 +281,37 @@ def number_prose_with_colon(m) -> str:
     rule="<user.number_signed_string> | <user.number_prose_with_dot> | <user.number_prose_with_comma> | <user.number_prose_with_colon>"
 )
 def number_prose_unprefixed(m) -> str:
+    """Return the resolved string for a prose number capture.
+
+    Talon appends numeric suffixes (``_1``, ``_2`` …) when a capture is
+    repeated in a single rule.  The match object that is passed to each
+    capture function only exposes the suffixed attribute, so we need to look
+    for either the plain attribute name or any suffixed variant in order to
+    retrieve the resolved value.  Otherwise repeated captures would fall back
+    to ``m[0]`` which still contains the first capture's text.
+    """
+
+    def _get_attribute(base_name: str) -> str | None:
+        value = getattr(m, base_name, None)
+        if value is not None:
+            return value
+
+        prefixed = f"{base_name}_"
+        for name in dir(m):
+            if name.startswith(prefixed) and name[len(prefixed) :].isdigit():
+                value = getattr(m, name, None)
+                if value is not None:
+                    return value
+
+        return None
+
     for attribute in (
         "number_signed_string",
         "number_prose_with_dot",
         "number_prose_with_comma",
         "number_prose_with_colon",
     ):
-        value = getattr(m, attribute, None)
+        value = _get_attribute(attribute)
         if value is not None:
             return value
 
