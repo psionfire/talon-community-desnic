@@ -56,6 +56,12 @@ if hasattr(talon, "test_mode"):
         mock_insert.assert_called_once_with(expected)
 
 
+    def test_number_prose_unprefixed_supports_repeated_captures():
+        match = FakeMatch("WRONG", number_prose_with_dot_1="2.5")
+
+        assert numbers.number_prose_unprefixed(match) == "2.5"
+
+
     def test_random_float_integers():
         _assert_randf_range(
             FakeMatch("1", number_signed_string="1"),
@@ -66,7 +72,7 @@ if hasattr(talon, "test_mode"):
 
     def test_random_float_decimals():
         _assert_randf_range(
-            FakeMatch("0.5", number_prose_with_dot="0.5"),
-            FakeMatch("0.5", number_prose_with_dot="2.5"),
+            FakeMatch("WRONG", number_prose_with_dot="0.5"),
+            FakeMatch("WRONG", number_prose_with_dot_1="2.5"),
             "randf_range(0.5, 2.5)",
         )
