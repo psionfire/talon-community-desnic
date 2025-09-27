@@ -176,7 +176,7 @@ random int <number> to <number>:
     user.gdscript_random_int(number_1, number_2)
 
 random float <user.number_prose_unprefixed> to <user.number_prose_unprefixed>:
-    user.gdscript_random_float(number_prose_unprefixed, number_prose_unprefixed_1)
+    user.gdscript_random_float(number_prose_unprefixed_1, number_prose_unprefixed_2)
 
 randomize seed:
     user.gdscript_randomize()
