@@ -175,8 +175,8 @@ decrement <user.text>:
 random int <number> to <number>:
     user.gdscript_random_int(number_1, number_2)
 
-random float <user.number_prose_unprefixed> to <user.number_prose_unprefixed>:
-    user.gdscript_random_float(number_prose_unprefixed, number_prose_unprefixed_1)
+random float <user.number_prose_unprefixed_first> to <user.number_prose_unprefixed_second>:
+    user.gdscript_random_float(number_prose_unprefixed_first, number_prose_unprefixed_second)
 
 randomize seed:
     user.gdscript_randomize()
