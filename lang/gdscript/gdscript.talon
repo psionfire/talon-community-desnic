@@ -159,8 +159,8 @@ empty dictionary:
 dictionary <user.text>:
     user.gdscript_insert_dictionary(text)
 
-enum <user.text> <user.text>:
-    user.gdscript_insert_enum(text, text_1)
+enum <user.text>:
+    user.gdscript_insert_enum(text)
 
 set <user.text> equals <user.text>:
     user.gdscript_assignment(text, text_1)
@@ -171,11 +171,12 @@ increment <user.text>:
 decrement <user.text>:
     user.gdscript_decrement(text)
 
+# Talon numbers repeated captures starting at number_1/number_2.
 random int <number> to <number>:
-    user.gdscript_random_int(number, number_1)
+    user.gdscript_random_int(number_1, number_2)
 
-random float <number> to <number>:
-    user.gdscript_random_float(number, number_1)
+random float <user.number_prose_unprefixed> to <user.number_prose_unprefixed>:
+    user.gdscript_random_float(number_prose_unprefixed, number_prose_unprefixed_1)
 
 randomize seed:
     user.gdscript_randomize()

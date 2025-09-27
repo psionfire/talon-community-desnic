@@ -116,8 +116,16 @@ def _insert_export(name: str, type_name: Optional[str] = None) -> None:
 
 def _insert_enum(name: str, values: Iterable[str]) -> None:
     formatted_name = actions.user.formatted_text(name, "PUBLIC_CAMEL_CASE")
-    formatted_values = ", ".join(_format_constant_name(value) for value in values)
-    actions.insert(f"enum {formatted_name} {{ {formatted_values} }}")
+    formatted_values = [
+        _format_constant_name(value)
+        for value in values
+        if value
+    ]
+    if formatted_values:
+        joined_values = ", ".join(formatted_values)
+        actions.insert(f"enum {formatted_name} {{ {joined_values} }}")
+    else:
+        actions.insert(f"enum {formatted_name} {{}}")
 
 
 def _get_type_lookup() -> dict[str, str]:
@@ -332,9 +340,41 @@ class UserActions:
         else:
             actions.insert("{}")
 
-    def gdscript_insert_enum(name: str, values: str):
-        value_list = [value.strip(",") for value in values.split() if value.strip(",")]
-        _insert_enum(name, value_list)
+    def gdscript_insert_enum(words: str):
+        parts = [part.strip(",") for part in words.split() if part.strip(",")]
+        if not parts:
+            return
+
+        lowered = [part.lower() for part in parts]
+        split_index = next(
+            (index for index, token in enumerate(lowered) if token in {"with", "values"}),
+            None,
+        )
+
+        if split_index is not None and split_index > 0:
+            name_parts = parts[:split_index]
+            raw_values = parts[split_index + 1 :]
+        else:
+            name_parts = parts[:1]
+            raw_values = parts[1:]
+
+        name = " ".join(name_parts)
+        if any(token.lower() in {"and", "comma"} for token in raw_values):
+            grouped_values = []
+            current: list[str] = []
+            for token in raw_values:
+                if token.lower() in {"and", "comma"}:
+                    if current:
+                        grouped_values.append(" ".join(current))
+                        current = []
+                else:
+                    current.append(token)
+            if current:
+                grouped_values.append(" ".join(current))
+        else:
+            grouped_values = raw_values
+
+        _insert_enum(name, grouped_values)
 
     def gdscript_assignment(name: str, value: str):
         actions.insert(f"{name} = {value}")
@@ -505,7 +545,7 @@ class GDScriptActions:
         """Insert a dictionary literal, optionally populated with pairs."""
         pass
 
-    def gdscript_insert_enum(name: str, values: str):
+    def gdscript_insert_enum(words: str):
         """Insert an enum declaration with the provided members."""
         pass
 
