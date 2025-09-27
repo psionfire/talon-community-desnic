@@ -11,6 +11,7 @@ This checklist covers only the Godot editor commands and GDScript language snipp
 - `on signal pressed` → `func _on_pressed(): pass`
 - `enum state idle running jumping` → `enum State { IDLE, RUNNING, JUMPING }`
 - `random int one to ten` → `randi_range(1, 10)`
+- `random float one to three` → `randf_range(1, 3)`
 - `random float zero point five to two point five` → `randf_range(0.5, 2.5)`
 - `enter tree` → `func _enter_tree():`
 

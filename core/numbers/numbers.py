@@ -281,6 +281,16 @@ def number_prose_with_colon(m) -> str:
     rule="<user.number_signed_string> | <user.number_prose_with_dot> | <user.number_prose_with_comma> | <user.number_prose_with_colon>"
 )
 def number_prose_unprefixed(m) -> str:
+    for attribute in (
+        "number_signed_string",
+        "number_prose_with_dot",
+        "number_prose_with_comma",
+        "number_prose_with_colon",
+    ):
+        value = getattr(m, attribute, None)
+        if value is not None:
+            return value
+
     return m[0]
 
 
