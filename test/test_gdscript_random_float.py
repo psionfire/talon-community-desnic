@@ -48,8 +48,8 @@ if hasattr(talon, "test_mode"):
         mock_insert = MagicMock()
         actions.register_test_action("", "insert", mock_insert)
 
-        minimum = numbers.number_prose_unprefixed(minimum_match)
-        maximum = numbers.number_prose_unprefixed(maximum_match)
+        minimum = numbers.number_prose_unprefixed_first(minimum_match)
+        maximum = numbers.number_prose_unprefixed_second(maximum_match)
 
         gdscript_module.UserActions.gdscript_random_float(minimum, maximum)
 
@@ -65,7 +65,7 @@ if hasattr(talon, "test_mode"):
     def test_random_float_integers():
         _assert_randf_range(
             FakeMatch("1", number_signed_string="1"),
-            FakeMatch("1", number_signed_string="3"),
+            FakeMatch("WRONG", number_signed_string_1="3"),
             "randf_range(1, 3)",
         )
 
@@ -76,3 +76,11 @@ if hasattr(talon, "test_mode"):
             FakeMatch("WRONG", number_prose_with_dot_1="2.5"),
             "randf_range(0.5, 2.5)",
         )
+
+
+    def test_number_prose_unprefixed_wrappers_support_repeated_captures():
+        first = FakeMatch("WRONG", number_prose_with_dot="0.5")
+        second = FakeMatch("WRONG", number_prose_with_dot_1="2.5")
+
+        assert numbers.number_prose_unprefixed_first(first) == "0.5"
+        assert numbers.number_prose_unprefixed_second(second) == "2.5"

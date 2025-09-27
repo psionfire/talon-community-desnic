@@ -277,19 +277,8 @@ def number_prose_with_colon(m) -> str:
     return ":".join(m.number_string_list)
 
 
-@mod.capture(
-    rule="<user.number_signed_string> | <user.number_prose_with_dot> | <user.number_prose_with_comma> | <user.number_prose_with_colon>"
-)
-def number_prose_unprefixed(m) -> str:
-    """Return the resolved string for a prose number capture.
-
-    Talon appends numeric suffixes (``_1``, ``_2`` …) when a capture is
-    repeated in a single rule.  The match object that is passed to each
-    capture function only exposes the suffixed attribute, so we need to look
-    for either the plain attribute name or any suffixed variant in order to
-    retrieve the resolved value.  Otherwise repeated captures would fall back
-    to ``m[0]`` which still contains the first capture's text.
-    """
+def _resolve_number_prose_unprefixed(m) -> str:
+    """Return the resolved string for a prose number capture."""
 
     def _get_attribute(base_name: str) -> str | None:
         value = getattr(m, base_name, None)
@@ -316,6 +305,37 @@ def number_prose_unprefixed(m) -> str:
             return value
 
     return m[0]
+
+
+@mod.capture(
+    rule="<user.number_signed_string> | <user.number_prose_with_dot> | <user.number_prose_with_comma> | <user.number_prose_with_colon>"
+)
+def number_prose_unprefixed(m) -> str:
+    """Return the resolved string for a prose number capture.
+
+    Talon appends numeric suffixes (``_1``, ``_2`` …) when a capture is
+    repeated in a single rule.  The match object that is passed to each
+    capture function only exposes the suffixed attribute, so we need to look
+    for either the plain attribute name or any suffixed variant in order to
+    retrieve the resolved value.  Otherwise repeated captures would fall back
+    to ``m[0]`` which still contains the first capture's text.
+    """
+
+    return _resolve_number_prose_unprefixed(m)
+
+
+@mod.capture(rule="<user.number_prose_unprefixed>")
+def number_prose_unprefixed_first(m) -> str:
+    """Resolve the first prose number in a repeated capture."""
+
+    return _resolve_number_prose_unprefixed(m)
+
+
+@mod.capture(rule="<user.number_prose_unprefixed>")
+def number_prose_unprefixed_second(m) -> str:
+    """Resolve the second prose number in a repeated capture."""
+
+    return _resolve_number_prose_unprefixed(m)
 
 
 @mod.capture(rule="(numb | numeral) <user.number_prose_unprefixed>")
